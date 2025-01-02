@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Bài Tarot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+     <style>
+        body {
+    background-image: url('https://4kwallpapers.com/images/wallpapers/purple-planet-saturn-rings-nebula-galaxy-astronomy-stars-2560x1440-6416.jpg');
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: auto;
+    background-color: #f0f0f0;
+}
+	 .btn {
+  border: none;
+  width: 15em;
+  height: 5em;
+  border-radius: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #1C1A1C;
+  cursor: pointer;
+  transition: all 450ms ease-in-out;
+}
+
+.sparkle {
+  fill: #AAAAAA;
+  transition: all 800ms ease;
+}
+
+.text {
+  font-weight: 600;
+  color: white;
+  font-size: medium;
+}
+.btn {
+  color: white; /* Đặt màu chữ thành trắng */
+  font-family: 'Roboto', sans-serif; /* Chọn font chữ Roboto hoặc font sans-serif mặc định nếu không tìm thấy Roboto */
+    font-weight: 500;
+}
+
+.btn:hover {
+  background: linear-gradient(0deg,#A47CF3,#683FEA);
+  box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+  inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+  0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+  0px 0px 180px 0px #9917FF;
+  transform: translateY(-2px);
+}
+
+.btn:hover .text {
+  color: white;
+}
+
+.btn:hover .sparkle {
+  fill: white;
+  transform: scale(1.2);
+} 
+
+        .card {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            color: #f0f0f0;
+        }
+		.cardImage {
+           object-fit: contain; /* Changed to contain to show the full image */
+		   width: 100%;
+		   max-height: 300px; /* Set the max height */
+		   display: block;
+           margin-left: auto;
+           margin-right: auto;
+        }
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            
+        }
+        .card-front {
+            background: #1a365d;
+            transform: rotateY(180deg);
+           
+        }
+        .card-back {
+            background-image: 'https://tarotarts.com/cdn/shop/products/Smith-Waite_Tarot_in_a_Tin_card_back_270x450.jpg?v=1560306694';
+            background-size: cover;
+        }
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 1rem;
+        }
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .card-content {
+            color: #f0f0f0;
+            width: 250px; /* Adjust for card width */
+            height: 400px; /* Adjust for card height */
+            position: relative; /* For absolute positioning within this container */
+        }
+         #presentReading {
+             margin-top: 10px;
+            display: none;
+        }
+        #pastReading {
+              margin-top: 10px;
+            display: none;
+        }
+        #futureReading {
+              margin-top: 10px;
+            display: none;
+        }
+        .mystical-title {
+    display: flex; /* Sử dụng flexbox */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc (nếu cần)*/
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Hiệu ứng bóng đổ */
+    animation: glow 3s ease-in-out infinite alternate; /* Hiệu ứng nhấp nháy */
+    color: #a383f3; /* Màu sắc thần bí */
+}
+
+/* Animation cho hiệu ứng nhấp nháy */
+@keyframes glow {
+  from {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #b85ce2;
+  }
+  to {
+    text-shadow: 2px 2px 10px rgba(56, 92, 211, 0.9);
+    color: #bb47e9;
+  }
+}
+.container {
+  display: flex;
+  flex-direction: column; /* Để các phần tử con xếp theo chiều dọc */
+  align-items: center; /* Căn giữa theo chiều ngang */
+}
+.text-center.my-8.flex.justify-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+#dateDisplay {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      color: #d6af2f; /* Màu vàng nhạt */
+        font-family: 'Open Sans', sans-serif; /* font chữ dễ đọc */
+    }
+    #overallReading h3 {
+        font-family: 'Lora', serif; /* Font chữ có nét cổ điển */
+      font-size: 1.8rem; /* Kích thước chữ lớn hơn */
+      color: #fff;
+        text-align: center;
+      font-weight: bold; /* Làm đậm chữ */
+      letter-spacing: 1px; /* Khoảng cách giữa các chữ */
+       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Tạo bóng đổ nhẹ */
+      margin-bottom: 10px;
+    }
+    .initial-hidden {
+      display: none;
+  }
+  #overallReading h3::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #fff, #f0f, #fff, #0ff, #fff);
+    background-size: 400% 400%;
+    z-index: -1;
+    opacity: 0.8; /* Adjust the opacity as needed */
+    mix-blend-mode: overlay;
+    animation: glowing-background 10s linear infinite; /* Make it go slower */
+}
+#overallReading h3 {
+    animation: glowing-text 10s ease infinite;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                 1px 1px 5px rgba(255, 255, 255, 0.6),
+                 -1px -1px 5px rgba(255, 255, 255, 0.6),
+                 0 0 10px rgba(255, 255, 255, 0.5),
+                 1px 1px 10px rgba(255, 255, 255, 0.3); /* Add multiple text shadows for a glow effect */
+}
+
+@keyframes glowing-background {
+     0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+@keyframes glowing-text {
+    0% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                     1px 1px 5px rgba(255, 255, 255, 0.6),
+                     -1px -1px 5px rgba(255, 255, 255, 0.6),
+                     0 0 10px rgba(255, 255, 255, 0.5),
+                     1px 1px 10px rgba(255, 255, 255, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 7px rgba(255, 255, 255, 1),
+                     1px 1px 7px rgba(255, 255, 255, 0.8),
+                     -1px -1px 7px rgba(255, 255, 255, 0.8),
+                     0 0 12px rgba(255, 255, 255, 0.6),
+                     1px 1px 12px rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                     1px 1px 5px rgba(255, 255, 255, 0.6),
+                     -1px -1px 5px rgba(255, 255, 255, 0.6),
+                     0 0 10px rgba(255, 255, 255, 0.5),
+                     1px 1px 10px rgba(255, 255, 255, 0.3);
+    }
+}
+    
+    #overallMessage {
+    color: #ffffff; /* Hoặc màu khác bạn chọn */
+    background-color: rgba(0, 0, 0, 0.5); /* Nền đen trong suốt */
+    padding: 10px;
+    border-radius: 5px;
+    
+    /* Add the following line: */
+    white-space: normal;
+}
+#overallMessage:empty {
+  display: none;
+}
+
+
+       .card-wrapper h2 {
+         color: #ADD8E6;
+    }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-4 mystical-title">Xem Bài Tarot</h1>
+        <div id="dateDisplay" class="text-center mb-8 text-gray-600"></div>
+      </div>
+
+        <!-- Cards Container -->
+        <div class="cards-container">
+            <!-- Past Card -->
+            <div class="card-wrapper">
+                <h2 class="text-lg font-semibold text-center mb-4 text-gray-800">Quá Khứ</h2>
+                <div class="card-content">
+                  <div id="card1" class="card absolute w-full h-full">
+                      <div class="card-front rounded-lg shadow-lg p-4 flex flex-col justify-center items-center">
+                          <h3 class="cardName text-white text-center font-medium mb-2"></h3>
+                          <img class="cardImage mb-2" src="https://tarotarts.com/cdn/shop/products/Smith-Waite_Tarot_in_a_Tin_card_back_270x450.jpg?v=1560306694" alt="Tarot Card">
+                          <p class="cardMeaning text-white text-sm text-center"></p>
+                      </div>
+                      <div class="card-back rounded-lg shadow-lg"></div>
+                  </div>
+                </div>
+                 <div id="pastReading" class="mt-4 text-center"></div>
+            </div>
+
+            <!-- Present Card -->
+            <div class="card-wrapper">
+                <h2 class="text-lg font-semibold text-center mb-4 text-gray-800">Hiện Tại</h2>
+                 <div class="card-content">
+                    <div id="card2" class="card absolute w-full h-full">
+                        <div class="card-front rounded-lg shadow-lg p-4 flex flex-col justify-center items-center">
+                            <h3 class="cardName text-white text-center font-medium mb-2"></h3>
+                            <img class="cardImage mb-2" src="https://tarotarts.com/cdn/shop/products/Smith-Waite_Tarot_in_a_Tin_card_back_270x450.jpg?v=1560306694" alt="Tarot Card">
+                            <p class="cardMeaning text-white text-sm text-center"></p>
+                         </div>
+                        <div class="card-back rounded-lg shadow-lg"></div>
+                     </div>
+                </div>
+                 <div id="presentReading" class="mt-4 text-center"></div>
+            </div>
+
+            <!-- Future Card -->
+            <div class="card-wrapper">
+                <h2 class="text-lg font-semibold text-center mb-4 text-gray-800">Tương Lai</h2>
+                 <div class="card-content">
+                    <div id="card3" class="card absolute w-full h-full">
+                        <div class="card-front rounded-lg shadow-lg p-4 flex flex-col justify-center items-center">
+                            <h3 class="cardName text-white text-center font-medium mb-2"></h3>
+                            <img class="cardImage mb-2" src="https://tarotarts.com/cdn/shop/products/Smith-Waite_Tarot_in_a_Tin_card_back_270x450.jpg?v=1560306694" alt="Tarot Card">
+                            <p class="cardMeaning text-white text-sm text-center"></p>
+                        </div>
+                        <div class="card-back rounded-lg shadow-lg"></div>
+                    </div>
+                </div>
+                <div id="futureReading" class="mt-4 text-center"></div>
+            </div>
+        </div>
+
+        <!-- Control Button -->
+       <div class="text-center my-8 flex justify-center">
+    <button id="drawCards" class="btn" > 
+        <img width="50" height="50" src="https://img.icons8.com/water-color/50/fantasy.png" alt="fantasy"/> Rút bài mới 
+    </button>
+</div>
+
+        <!-- Overall Reading -->
+        <div id="overallReading" class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow hidden">
+            <h3 class="text-xl font-semibold mb-4 text-center initial-hidden">Thông Điệp Tổng Quát</h3>
+            <div id="overallMessage" class="prose mx-auto text-center"></div>
+        </div>
+    </div>
+
+    <script>
+       const tarotDeck = [
+    // Major Arcana (22 lá)
+    {
+        name: "The Fool (0) - Kẻ Khờ",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar00.jpg",
+        meaning: "Khởi đầu mới, ngây thơ, tự do, tinh thần phiêu lưu, tin tưởng vào cuộc sống",
+        reverseMeaning: "Thiếu suy nghĩ, liều lĩnh, thiếu trách nhiệm, lo lắng về tương lai"
+    },
+    {
+        name: "The Magician (I) - Nhà Ảo Thuật",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar01.jpg",
+        meaning: "Sức mạnh ý chí, sáng tạo, tài năng, khả năng biến ý tưởng thành hiện thực",
+        reverseMeaning: "Thao túng, lừa dối, lãng phí tài năng, thiếu tập trung"
+    },
+    {
+        name: "The High Priestess (II) - Nữ Giáo Hoàng",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar02.jpg",
+        meaning: "Trực giác, bí ẩn, kiến thức nội tâm, sự thấu hiểu sâu sắc",
+        reverseMeaning: "Bí mật bị tiết lộ, thiếu trực giác, bỏ qua tiếng nói nội tâm"
+    },
+    {
+        name: "The Empress (III) - Hoàng Hậu",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar03.jpg",
+        meaning: "Sự phong phú, sinh sản, tình mẫu tử, sáng tạo, sự nuôi dưỡng",
+        reverseMeaning: "Phụ thuộc quá mức, thiếu sáng tạo, bất an trong các mối quan hệ"
+    },
+    {
+        name: "The Emperor (IV) - Hoàng Đế",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar04.jpg",
+        meaning: "Quyền lực, uy quyền, kỷ luật, cấu trúc, sự ổn định",
+        reverseMeaning: "Độc đoán, kiểm soát quá mức, thiếu linh hoạt, yếu đuối"
+    },
+    {
+        name: "The Hierophant (V) - Giáo Hoàng",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar05.jpg",
+        meaning: "Truyền thống, tâm linh, giáo dục, niềm tin, sự hướng dẫn",
+        reverseMeaning: "Giáo điều, bảo thủ, hạn chế tự do, nổi loạn với truyền thống"
+    },
+    {
+        name: "The Lovers (VI) - Đôi Tình Nhân",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar06.jpg",
+        meaning: "Tình yêu, sự lựa chọn, mối quan hệ hài hòa, giá trị cá nhân",
+        reverseMeaning: "Mất cân bằng trong quan hệ, lựa chọn sai lầm, xung đột nội tâm"
+    },
+    {
+        name: "The Chariot (VII) - Cỗ Xe",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar07.jpg",
+        meaning: "Ý chí chiến thắng, quyết tâm, tự tin, kiểm soát, tiến bước",
+        reverseMeaning: "Thiếu phương hướng, mất kiểm soát, thất bại, bạo lực"
+    },
+    {
+        name: "Strength (VIII) - Sức Mạnh",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar08.jpg",
+        meaning: "Sức mạnh nội tâm, can đảm, kiên nhẫn, lòng trắc ẩn",
+        reverseMeaning: "Yếu đuối, thiếu tự tin, lạm dụng quyền lực, nghi ngờ bản thân"
+    },
+    {
+        name: "The Hermit (IX) - Ẩn Sĩ",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar09.jpg",
+        meaning: "Nội tâm, suy ngẫm, cô độc, tìm kiếm chân lý, hướng dẫn tinh thần",
+        reverseMeaning: "Cô lập, cô đơn, thiếu định hướng, từ chối lời khuyên"
+    },
+    {
+        name: "Wheel of Fortune (X) - Bánh Xe Vận Mệnh",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar10.jpg",
+        meaning: "Vận may, thay đổi, chu kỳ, định mệnh, cơ hội mới",
+        reverseMeaning: "Xui xẻo, thất bại, gián đoạn, kháng cự với thay đổi"
+    },
+    {
+        name: "Justice (XI) - Công Lý",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar11.jpg",
+        meaning: "Công bằng, chân thật, trách nhiệm, nguyên nhân và kết quả",
+        reverseMeaning: "Bất công, thiếu trung thực, không cân bằng, quyết định sai lầm"
+    },
+    {
+        name: "The Hanged Man (XII) - Người Treo Ngược",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar12.jpg",
+        meaning: "Hy sinh, buông bỏ, quan điểm mới, chờ đợi, tạm dừng",
+        reverseMeaning: "Kháng cự, trì hoãn vô ích, bám víu, thiếu cam kết"
+    },
+    {
+        name: "Death (XIII) - Thần Chết",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar13.jpg",
+        meaning: "Kết thúc, thay đổi, chuyển hóa, tái sinh, khởi đầu mới",
+        reverseMeaning: "Kháng cự thay đổi, trì trệ, suy thoái, trầm cảm"
+    },
+    {
+        name: "Temperance (XIV) - Tiết Độ",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar14.jpg",
+        meaning: "Cân bằng, hòa hợp, kiên nhẫn, điều độ, tích hợp",
+        reverseMeaning: "Mất cân bằng, thái quá, xung đột nội tâm, thiếu kiên nhẫn"
+    },
+    {
+        name: "The Devil (XV) - Quỷ Dữ",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar15.jpg",
+        meaning: "Ràng buộc, nghiện ngập, ham muốn vật chất, bóng tối nội tâm",
+        reverseMeaning: "Giải phóng, vượt qua giới hạn, phục hồi quyền lực"
+    },
+    {
+        name: "The Tower (XVI) - Tháp",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar16.jpg",
+        meaning: "Thay đổi đột ngột, khủng hoảng, giải phóng, phá vỡ ảo tưởng",
+        reverseMeaning: "Tránh né thảm họa, sợ thay đổi, kéo dài khủng hoảng"
+    },
+    {
+        name: "The Star (XVII) - Ngôi Sao",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar17.jpg",
+        meaning: "Hy vọng, cảm hứng, tái sinh, chữa lành, định hướng",
+        reverseMeaning: "Mất niềm tin, thất vọng, bi quan, thiếu động lực"
+    },
+    {
+        name: "The Moon (XVIII) - Mặt Trăng",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar18.jpg",
+        meaning: "Trực giác, ảo tưởng, sợ hãi, những điều ẩn giấu, giấc mơ",
+        reverseMeaning: "Nhầm lẫn, sợ hãi, lừa dối, ảo tưởng tiêu cực"
+    },
+    {
+        name: "The Sun (XIX) - Mặt Trời",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar19.jpg",
+        meaning: "Hạnh phúc, thành công, niềm vui, sáng tỏ, năng lượng tích cực",
+        reverseMeaning: "Tự phụ, trì hoãn thành công, thiếu nhiệt huyết"
+    },
+    {
+        name: "Judgement (XX) - Phán Xét",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar20.jpg",
+        meaning: "Tái sinh, thức tỉnh, tha thứ, tiếng gọi số phận, quyết định quan trọng",
+        reverseMeaning: "Từ chối thay đổi, hối tiếc, tự phán xét, nghi ngờ"
+    },
+    {
+        name: "The World (XXI) - Thế Giới",
+        image: "https://sacred-texts.com/tarot/pkt/img/ar21.jpg",
+        meaning: "Hoàn thành, thành công, tích hợp, hài hòa, du lịch",
+        reverseMeaning: "Chưa hoàn thành, trì hoãn, thiếu kết thúc, bất mãn"
+    },
+
+    // Minor Arcana - Wands (14 lá)
+    {
+        name: "Ace of Wands - Át Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/waac.jpg",
+        meaning: "Khởi đầu mới, cảm hứng, tiềm năng sáng tạo, cơ hội",
+        reverseMeaning: "Trì hoãn, thiếu động lực, ý tưởng bị chặn"
+    },
+    {
+        name: "Two of Wands - 2 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa02.jpg",
+        meaning: "Kế hoạch tương lai, quyết định, khám phá, tiến bộ",
+        reverseMeaning: "Sợ thay đổi, thiếu kế hoạch, lựa chọn sai"
+    },
+    {
+        name: "Three of Wands - 3 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa03.jpg",
+        meaning: "Mở rộng, thành công, lãnh đạo, nhìn xa trông rộng",
+        reverseMeaning: "Trở ngại, trì hoãn, thiếu hợp tác"
+    },
+    {
+        name: "Four of Wands - 4 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa04.jpg",
+        meaning: "Lễ kỷ niệm, hạnh phúc gia đình, thành tựu, hòa hợp",
+        reverseMeaning: "Chuyển tiếp, thiếu ổn định, xung đột gia đình"
+    },
+    {
+        name: "Five of Wands - 5 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa05.jpg",
+        meaning: "Cạnh tranh, xung đột, thử thách, tranh luận",
+        reverseMeaning: "Tránh xung đột, hòa giải, kết thúc tranh chấp"
+    },
+    {
+        name: "Six of Wands - 6 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa06.jpg",
+        meaning: "Chiến thắng, thành công, công nhận, tự hào",
+        reverseMeaning: "Kiêu ngạo, thiếu tự tin, thất bại"
+    },
+    {
+        name: "Seven of Wands - 7 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa07.jpg",
+        meaning: "Thách thức, cạnh tranh, bảo vệ vị trí, can đảm",
+        reverseMeaning: "Nghi ngờ bản thân, áp lực, đầu hàng"
+    },
+    {
+        name: "Eight of Wands - 8 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa08.jpg",
+        meaning: "Hành động nhanh, tiến triển, thông tin mới, du lịch",
+        reverseMeaning: "Trì hoãn, thất vọng, xung đột nội tâm"
+    },
+    {
+        name: "Nine of Wands - 9 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa09.jpg",
+        meaning: "Kiên trì, sức mạnh nội tâm, chuẩn bị, phòng thủ",
+        reverseMeaning: "Kiệt sức, yếu đuối, từ bỏ, thiếu niềm tin"
+    },
+    {
+        name: "Ten of Wands - 10 Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wa10.jpg",
+        meaning: "Gánh nặng, trách nhiệm, áp lực, hoàn thành",
+        reverseMeaning: "Kiệt sức, từ bỏ trách nhiệm, chia sẻ gánh nặng"
+    },
+    {
+        name: "Page of Wands - Thị Đồng Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wapa.jpg",
+        meaning: "Tin tức mới, khám phá, nhiệt tình, tiềm năng",
+        reverseMeaning: "Trì hoãn, thiếu kiên nhẫn, tin xấu"
+    },
+	{
+        name: "Knight of Wands - Kỵ Sĩ Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/wakn.jpg",
+        meaning: "Hành động nhanh, nhiệt huyết, phiêu lưu, tự tin",
+        reverseMeaning: "Thiếu kiên nhẫn, bốc đồng, trì hoãn, nản chí"
+    },
+    {
+        name: "Queen of Wands - Hoàng Hậu Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/waqu.jpg",
+        meaning: "Tự tin, quyến rũ, độc lập, nhiệt tình, sáng tạo",
+        reverseMeaning: "Đòi hỏi, ghen tị, thiếu tự tin, thất thường"
+    },
+    {
+        name: "King of Wands - Hoàng Đế Gậy",
+        image: "https://sacred-texts.com/tarot/pkt/img/waki.jpg",
+        meaning: "Lãnh đạo, tầm nhìn, doanh nhân, sáng tạo, quyết đoán",
+        reverseMeaning: "Độc đoán, nóng nảy, thiếu kiên nhẫn, kiêu ngạo"
+    },
+
+    // Minor Arcana - Cups (14 lá)
+    {
+        name: "Ace of Cups - Át Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cuac.jpg",
+        meaning: "Tình yêu mới, cảm xúc dạt dào, sáng tạo, trực giác",
+        reverseMeaning: "Cảm xúc tiêu cực, tình yêu tan vỡ, trống rỗng"
+    },
+    {
+        name: "Two of Cups - 2 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu02.jpg",
+        meaning: "Quan hệ mới, hợp tác, thu hút, hòa hợp",
+        reverseMeaning: "Chia tay, mất cân bằng, thiếu hòa hợp"
+    },
+    {
+        name: "Three of Cups - 3 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu03.jpg",
+        meaning: "Lễ kỷ niệm, tình bạn, niềm vui, thành công",
+        reverseMeaning: "Quá đà, cô đơn, nhóm tan rã"
+    },
+    {
+        name: "Four of Cups - 4 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu04.jpg",
+        meaning: "Suy ngẫm, không hài lòng, chán nản, bỏ lỡ cơ hội",
+        reverseMeaning: "Nhận ra cơ hội, thay đổi thái độ, hành động"
+    },
+    {
+        name: "Five of Cups - 5 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu05.jpg",
+        meaning: "Mất mát, tiếc nuối, thất vọng, đau buồn",
+        reverseMeaning: "Hồi phục, chấp nhận, hy vọng mới"
+    },
+    {
+        name: "Six of Cups - 6 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu06.jpg",
+        meaning: "Hoài niệm, hồi ức đẹp, ngây thơ, quà tặng",
+        reverseMeaning: "Mắc kẹt trong quá khứ, trưởng thành"
+    },
+    {
+        name: "Seven of Cups - 7 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu07.jpg",
+        meaning: "Lựa chọn, mơ mộng, ảo tưởng, tưởng tượng",
+        reverseMeaning: "Thực tế hóa, quyết định rõ ràng, tập trung"
+    },
+    {
+        name: "Eight of Cups - 8 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu08.jpg",
+        meaning: "Rời bỏ, thay đổi hướng đi, tìm kiếm ý nghĩa",
+        reverseMeaning: "Sợ thay đổi, trì hoãn, quay lại"
+    },
+    {
+        name: "Nine of Cups - 9 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu09.jpg",
+        meaning: "Mãn nguyện, hạnh phúc, ước mơ thành hiện thực",
+        reverseMeaning: "Tham lam, không thỏa mãn, kiêu ngạo"
+    },
+    {
+        name: "Ten of Cups - 10 Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cu10.jpg",
+        meaning: "Hạnh phúc gia đình, hòa hợp, tình yêu trọn vẹn",
+        reverseMeaning: "Xung đột gia đình, tan vỡ, mất hòa khí"
+    },
+    {
+        name: "Page of Cups - Thị Đồng Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cupa.jpg",
+        meaning: "Tin vui, sáng tạo, trực giác, tình cảm mới",
+        reverseMeaning: "Tin buồn, thất vọng, ảo tưởng"
+    },
+    {
+        name: "Knight of Cups - Kỵ Sĩ Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cukn.jpg",
+        meaning: "Lãng mạn, quyến rũ, sáng tạo, theo đuổi ước mơ",
+        reverseMeaning: "Lừa dối, thất hứa, ảo tưởng"
+    },
+    {
+        name: "Queen of Cups - Hoàng Hậu Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cuqu.jpg",
+        meaning: "Trực giác, đồng cảm, chăm sóc, tình cảm sâu sắc",
+        reverseMeaning: "Cảm xúc không ổn định, phụ thuộc, ghen tuông"
+    },
+    {
+        name: "King of Cups - Hoàng Đế Cốc",
+        image: "https://sacred-texts.com/tarot/pkt/img/cuki.jpg",
+        meaning: "Cân bằng cảm xúc, từ bi, tư vấn, sáng suốt",
+        reverseMeaning: "Thao túng cảm xúc, lạm dụng, thiếu đồng cảm"
+    },
+
+    // Minor Arcana - Swords (14 lá)
+    {
+        name: "Ace of Swords - Át Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/swac.jpg",
+        meaning: "Sáng suốt, chân lý, đột phá, khởi đầu mới",
+        reverseMeaning: "Nhầm lẫn, quyết định sai, ý tưởng tồi"
+    },
+    {
+        name: "Two of Swords - 2 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw02.jpg",
+        meaning: "Lưỡng lự, cân nhắc, quyết định khó, hòa bình",
+        reverseMeaning: "Bế tắc, căng thẳng, nhầm lẫn"
+    },
+    {
+        name: "Three of Swords - 3 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw03.jpg",
+        meaning: "Đau khổ, tan vỡ, thất vọng, tổn thương",
+        reverseMeaning: "Hồi phục, tha thứ, giải thoát"
+    },
+    {
+        name: "Four of Swords - 4 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw04.jpg",
+        meaning: "Nghỉ ngơi, hồi phục, tĩnh tâm, thiền định",
+        reverseMeaning: "Căng thẳng, bất an, thiếu nghỉ ngơi"
+    },
+    {
+        name: "Five of Swords - 5 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw05.jpg",
+        meaning: "Xung đột, thất bại, tổn thất, cạnh tranh",
+        reverseMeaning: "Hòa giải, tha thứ, vượt qua khó khăn"
+    },
+    {
+        name: "Six of Swords - 6 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw06.jpg",
+        meaning: "Chuyển tiếp, di chuyển, bình an, vượt qua khó khăn",
+        reverseMeaning: "Trì hoãn, kẹt lại, khó khăn trong di chuyển"
+    },
+    {
+        name: "Seven of Swords - 7 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw07.jpg",
+        meaning: "Lừa dối, trốn tránh, chiến thuật, rủi ro",
+        reverseMeaning: "Thú nhận, đối mặt hậu quả, thoát khỏi lừa dối"
+    },
+    {
+        name: "Eight of Swords - 8 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw08.jpg",
+        meaning: "Giới hạn, cản trở, tự giam hãm, bế tắc",
+        reverseMeaning: "Giải thoát, vượt qua giới hạn, tự do"
+    },
+    {
+        name: "Nine of Swords - 9 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw09.jpg",
+        meaning: "Lo âu, ác mộng, sợ hãi, áp lực tinh thần",
+        reverseMeaning: "Hy vọng, vượt qua nỗi sợ, hồi phục"
+    },
+    {
+        name: "Ten of Swords - 10 Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/sw10.jpg",
+        meaning: "Kết thúc đau đớn, đáy của khó khăn, tái sinh",
+        reverseMeaning: "Hồi phục, tái sinh, vượt qua đau khổ"
+    },
+    {
+        name: "Page of Swords - Thị Đồng Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/swpa.jpg",
+        meaning: "Tò mò, thông minh, cảnh giác, tin tức",
+        reverseMeaning: "Thiếu suy nghĩ, tin đồn, lừa dối"
+    },
+    {
+        name: "Knight of Swords - Kỵ Sĩ Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/swkn.jpg",
+        meaning: "Hành động nhanh, quyết đoán, thông minh, can đảm",
+        reverseMeaning: "Bốc đồng, hung hăng, thiếu suy nghĩ"
+    },
+    {
+        name: "Queen of Swords - Hoàng Hậu Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/swqu.jpg",
+        meaning: "Thông minh, độc lập, thẳng thắn, công bằng",
+        reverseMeaning: "Cay nghiệt, lạnh lùng, thiếu đồng cảm"
+    },
+    {
+        name: "King of Swords - Hoàng Đế Kiếm",
+        image: "https://sacred-texts.com/tarot/pkt/img/swki.jpg",
+        meaning: "Quyền lực trí tuệ, logic, công lý, lãnh đạo",
+        reverseMeaning: "Độc đoán, lạm dụng quyền lực, bất công"
+    },
+
+    // Minor Arcana - Pentacles (14 lá)
+    {
+        name: "Ace of Pentacles - Át Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/peac.jpg",
+        meaning: "Cơ hội mới về tài chính, thịnh vượng, quà tặng",
+        reverseMeaning: "Cơ hội bị lỡ, mất mát tài chính, tham lam"
+    },
+    {
+        name: "Two of Pentacles - 2 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe02.jpg",
+        meaning: "Cân bằng, linh hoạt, quản lý thời gian, thích nghi",
+        reverseMeaning: "Mất cân bằng, quá tải, khó khăn tài chính"
+    },
+    {
+        name: "Three of Pentacles - 3 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe03.jpg",
+        meaning: "Hợp tác, kỹ năng, công nhận, học nghề",
+        reverseMeaning: "Thiếu hợp tác, chất lượng kém, tham vọng"
+    },
+    {
+        name: "Four of Pentacles - 4 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe04.jpg",
+        meaning: "An toàn tài chính, bảo thủ, tiết kiệm, sở hữu",
+        reverseMeaning: "Keo kiệt, mất an toàn, thay đổi tài chính"
+    },
+    {
+        name: "Five of Pentacles - 5 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe05.jpg",
+        meaning: "Khó khăn vật chất, cô đơn, bệnh tật, nghèo khó",
+        reverseMeaning: "Hồi phục, cải thiện, sự giúp đỡ đến"
+    },
+    {
+        name: "Six of Pentacles - 6 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe06.jpg",
+        meaning: "Cho và nhận, hào phóng, chia sẻ, công bằng",
+        reverseMeaning: "Nợ nần, tham lam, bất công, lạm dụng"
+    },
+	{
+        name: "Seven of Pentacles - 7 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe07.jpg",
+        meaning: "Đánh giá lại, kiên nhẫn, đầu tư, thu hoạch",
+        reverseMeaning: "Thiếu kiên nhẫn, đầu tư kém, thất vọng"
+    },
+    {
+        name: "Eight of Pentacles - 8 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe08.jpg",
+        meaning: "Học nghề, chăm chỉ, tiến bộ, hoàn thiện kỹ năng",
+        reverseMeaning: "Thiếu hoàn thiện, lười biếng, không hiệu quả"
+    },
+    {
+        name: "Nine of Pentacles - 9 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe09.jpg",
+        meaning: "Độc lập tài chính, sang trọng, tự chủ, thành công",
+        reverseMeaning: "Phụ thuộc, mất an ninh, khoe khoang"
+    },
+    {
+        name: "Ten of Pentacles - 10 Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pe10.jpg",
+        meaning: "Sự giàu có, di sản, gia đình, sự ổn định lâu dài",
+        reverseMeaning: "Mất mát tài sản, xung đột gia đình, phá sản"
+    },
+    {
+        name: "Page of Pentacles - Thị Đồng Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pepa.jpg",
+        meaning: "Học hỏi, cơ hội mới, chăm chỉ, thực tế",
+        reverseMeaning: "Lười biếng, thiếu định hướng, tin xấu về tài chính"
+    },
+    {
+        name: "Knight of Pentacles - Kỵ Sĩ Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pekn.jpg",
+        meaning: "Đáng tin cậy, chăm chỉ, kiên nhẫn, thực tế",
+        reverseMeaning: "Trì trệ, lười biếng, thiếu cam kết"
+    },
+    {
+        name: "Queen of Pentacles - Hoàng Hậu Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/pequ.jpg",
+        meaning: "Chu đáo, thực tế, sung túc, quản lý giỏi",
+        reverseMeaning: "Thiếu tự tin, phụ thuộc, lãng phí"
+    },
+    {
+        name: "King of Pentacles - Hoàng Đế Xu",
+        image: "https://sacred-texts.com/tarot/pkt/img/peki.jpg",
+        meaning: "Thành công, giàu có, kinh doanh giỏi, đáng tin cậy",
+        reverseMeaning: "Tham lam, thiếu đạo đức, mất an toàn tài chính"
+    }
+        ];
+
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('vi-VN', options);
+        }
+
+        function getRandomCard(usedCards) {
+            let availableCards = tarotDeck.filter(card => !usedCards.includes(card));
+            return availableCards[Math.floor(Math.random() * availableCards.length)];
+        }
+
+        function createReadingContent(cardName, isReversed, meaning) {
+            return `
+                <p class="font-medium text-gray-900">${cardName}</p>
+                <p class="text-gray-600 text-sm">
+                    ${isReversed ? 'Ngược' : 'Xuôi'}: ${meaning}
+                </p>
+            `;
+        }
+
+        function drawCards() {
+            const usedCards = [];
+            const readings = [];
+            
+            ['pastReading', 'presentReading', 'futureReading'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            document.getElementById('overallReading').classList.add('hidden');
+
+            const cards = [
+                {
+                    cardElement: document.getElementById('card1'),
+                    readingElement: document.getElementById('pastReading'),
+                    position: 'Quá khứ'
+                },
+                {
+                    cardElement: document.getElementById('card2'),
+                    readingElement: document.getElementById('presentReading'),
+                    position: 'Hiện tại'
+                },
+                {
+                    cardElement: document.getElementById('card3'),
+                    readingElement: document.getElementById('futureReading'),
+                    position: 'Tương lai'
+                }
+            ];
+
+            // Reset cards
+            cards.forEach(({cardElement}) => {
+                cardElement.classList.remove('flipped');
+            });
+
+            // Draw cards with delay
+            setTimeout(() => {
+                cards.forEach(({cardElement, readingElement, position}, index) => {
+                    setTimeout(() => {
+                        const cardData = getRandomCard(usedCards);
+                        usedCards.push(cardData);
+                        const isReversed = Math.random() < 0.5;
+                        
+                        // Update card display
+                        const frontElement = cardElement.querySelector('.card-front');
+frontElement.querySelector('.cardName').textContent = cardData.name;
+const cardImage = frontElement.querySelector('.cardImage');
+cardImage.src = cardData.image;
+// Thêm hoặc xóa transform rotate tùy thuộc vào isReversed
+cardImage.style.transform = isReversed ? 'rotate(180deg)' : '';
+frontElement.querySelector('.cardMeaning').textContent = 
+    isReversed ? cardData.reverseMeaning : cardData.meaning;
+                        
+                        // Flip card
+                        cardElement.classList.add('flipped');
+                        
+                        // Update reading
+                        setTimeout(() => {
+                            readingElement.innerHTML = createReadingContent(
+                                cardData.name,
+                                isReversed,
+                                isReversed ? cardData.reverseMeaning : cardData.meaning
+                            );
+                        }, 500);
+
+                        readings.push({
+                            position,
+                            name: cardData.name,
+                            meaning: isReversed ? cardData.reverseMeaning : cardData.meaning
+                        });
+
+                        // Show overall reading after last card
+                        if (index === 2) {
+                            setTimeout(showOverallReading, 1000, readings);
+                        }
+                    }, index * 1000);
+                });
+            }, 500);
+        }
+
+        function showOverallReading(readings) {
+            const overallReading = document.getElementById('overallReading');
+            const message = `
+                <p class="mb-4">
+                    Bộ ba lá bài này cho thấy một hành trình từ ${readings[0].meaning.toLowerCase()} (${readings[0].position}), 
+                    qua ${readings[1].meaning.toLowerCase()} (${readings[1].position}), 
+                    và hướng tới ${readings[2].meaning.toLowerCase()} (${readings[2].position}).
+                </p>
+                <p>
+                    Hãy suy ngẫm về mối liên hệ giữa ba giai đoạn này và cách chúng ảnh hưởng 
+                    đến con đường của bạn.
+                </p>
+                <p>
+                    Mọi thứ chỉ là tham khảo. Nếu bạn có vấn đề hay liên lạc cho người thân hoặc bác sĩ tâm lý.
+                </p>
+            `;
+            
+            document.getElementById('overallMessage').innerHTML = message;
+            overallReading.classList.remove('hidden');
+            overallReading.querySelector('h3').classList.remove('initial-hidden');
+          
+        }
+
+        // Initialize
+        updateDate();
+        document.getElementById('drawCards').addEventListener('click', drawCards);
+    </script>
+</body>
+</html>
